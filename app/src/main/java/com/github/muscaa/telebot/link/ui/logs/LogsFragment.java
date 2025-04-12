@@ -16,16 +16,15 @@ public class LogsFragment extends Fragment {
 
     private FragmentLogsBinding binding;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        LogsViewModel homeViewModel =
-                new ViewModelProvider(this).get(LogsViewModel.class);
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        LogsViewModel logsViewModel = new ViewModelProvider(this).get(LogsViewModel.class);
 
         binding = FragmentLogsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         final TextView textView = binding.textHome;
-        homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        logsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 
