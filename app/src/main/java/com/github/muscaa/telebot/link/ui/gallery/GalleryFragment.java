@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.github.muscaa.telebot.link.TelebotLink;
 import com.github.muscaa.telebot.link.databinding.FragmentGalleryBinding;
 
 public class GalleryFragment extends Fragment {
@@ -25,6 +26,9 @@ public class GalleryFragment extends Fragment {
 
         final TextView textView = binding.textGallery;
         galleryViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+
+        TelebotLink.INSTANCE.print("gallery");
+
         return root;
     }
 

@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.github.muscaa.telebot.link.TelebotLink;
 import com.github.muscaa.telebot.link.databinding.FragmentLogsBinding;
 
 public class LogsFragment extends Fragment {
@@ -24,7 +25,9 @@ public class LogsFragment extends Fragment {
         View root = binding.getRoot();
 
         final TextView textLogs = binding.textLogs;
-        logsViewModel.getText().observe(getViewLifecycleOwner(), textLogs::setText);
+        TelebotLink.INSTANCE.mLogs.observe(getViewLifecycleOwner(), textLogs::setText);
+
+        TelebotLink.INSTANCE.print("logs");
 
         return root;
     }
