@@ -23,8 +23,9 @@ public class LogsFragment extends Fragment {
         binding = FragmentLogsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textHome;
-        logsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        final TextView textLogs = binding.textLogs;
+        logsViewModel.getText().observe(getViewLifecycleOwner(), textLogs::setText);
+
         return root;
     }
 

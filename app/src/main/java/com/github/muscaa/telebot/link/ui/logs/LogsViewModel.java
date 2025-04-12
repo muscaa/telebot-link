@@ -10,7 +10,17 @@ public class LogsViewModel extends ViewModel {
 
     public LogsViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is logs fragment");
+        StringBuilder sb = new StringBuilder();
+        sb.append("""
+                hello
+                world
+                """);
+
+        for (int i = 0; i < 200; i++) {
+            sb.append(i).append("\n");
+        }
+
+        mText.setValue(sb.toString());
     }
 
     public LiveData<String> getText() {
