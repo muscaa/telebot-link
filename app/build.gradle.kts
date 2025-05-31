@@ -32,6 +32,12 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    packaging {
+        resources {
+            excludes += "/fluff_lib.info"
+        }
+    }
 }
 
 dependencies {
@@ -45,4 +51,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    implementation("com.github.muscaa:fluff-bin:1.0.7")
 }
