@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import fluff.bin.IBinaryInput;
 import fluff.bin.IBinaryOutput;
@@ -15,16 +17,17 @@ import fluff.bin.stream.BinaryInputStream;
 import fluff.bin.stream.BinaryOutputStream;
 import fluff.functions.gen.obj.TVoidFunc1;
 
-public class TcpClient<V extends TcpClient> {
+public class TcpClient<C extends TcpClient, L extends TcpClientListener<C>> {
 
-    private final TcpClientListener<V> listener;
+    protected static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
+    protected final L listener;
 
-    private Socket socket;
-    private Thread thread;
-    private InputStream input;
-    private OutputStream output;
+    protected Socket socket;
+    protected Thread thread;
+    protected InputStream input;
+    protected OutputStream output;
 
-    public TcpClient(TcpClientListener<V> listener) {
+    public TcpClient(L listener) {
         this.listener = listener;
     }
 
@@ -42,7 +45,7 @@ public class TcpClient<V extends TcpClient> {
                 TelebotLink.INSTANCE.print(e.toString());
             }
 
-            listener.onConnected((V) this);
+            listener.onConnected((C) this);
 
             while (isConnected()) {
                 try {
@@ -50,7 +53,7 @@ public class TcpClient<V extends TcpClient> {
                     int len = input.read(buf);
 
                     IBinaryInput in = new BinaryInputStream(new ByteArrayInputStream(buf, 0, len));
-                    listener.onReceived((V) this, in);
+                    listener.onReceived((C) this, in);
                 } catch (IOException e) {
                     TelebotLink.INSTANCE.print(e.toString());
 
@@ -64,32 +67,24 @@ public class TcpClient<V extends TcpClient> {
     }
 
     public void send(TVoidFunc1<IBinaryOutput, IOException> func) {
-        ByteArrayOutputStream data = new ByteArrayOutputStream();
-        IBinaryOutput out = new BinaryOutputStream(data);
-
-        try {
-            func.invoke(out);
-
-            send(data.toByteArray());
-        } catch (IOException e) {
-            TelebotLink.INSTANCE.print(e.toString());
-
-            disconnect();
-        }
-    }
-
-    public void send(byte[] data) {
         if (!isConnected()) {
             return;
         }
 
-        try {
-            output.write(data);
-        } catch (IOException e) {
-            TelebotLink.INSTANCE.print(e.toString());
+        EXECUTOR.execute(() -> {
+            ByteArrayOutputStream data = new ByteArrayOutputStream();
+            IBinaryOutput out = new BinaryOutputStream(data);
 
-            disconnect();
-        }
+            try {
+                func.invoke(out);
+
+                output.write(data.toByteArray());
+            } catch (IOException e) {
+                TelebotLink.INSTANCE.print(e.toString());
+
+                disconnect();
+            }
+        });
     }
 
     public void disconnect() {
@@ -97,13 +92,15 @@ public class TcpClient<V extends TcpClient> {
             return;
         }
 
-        try {
-            socket.close();
+        EXECUTOR.execute(() -> {
+            try {
+                socket.close();
 
-            listener.onDisconnected((V) this);
-        } catch (IOException e) {
-            TelebotLink.INSTANCE.print(e.toString());
-        }
+                listener.onDisconnected((C) this);
+            } catch (IOException e) {
+                TelebotLink.INSTANCE.print(e.toString());
+            }
+        });
     }
 
     public boolean isConnected() {

@@ -93,7 +93,7 @@ public class StunClientListener<V extends StunClient> implements TcpClientListen
 
         if (accept) {
             String ip = in.LenString();
-            int port = in.Short();
+            int port = in.Int();
 
             onLinkAccepted(client, name, ip, port);
         } else {
@@ -104,7 +104,7 @@ public class StunClientListener<V extends StunClient> implements TcpClientListen
     }
 
     public void onList(StunClient client, List<String> list) {
-        TelebotLink.INSTANCE.print(list.toString());
+        TelebotLink.INSTANCE.mClients.postValue(list);
     }
 
     public void onLinkRequest(StunClient client, String from) {

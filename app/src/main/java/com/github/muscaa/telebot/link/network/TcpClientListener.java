@@ -5,11 +5,11 @@ import java.io.IOException;
 
 import fluff.bin.IBinaryInput;
 
-public interface TcpClientListener<V extends TcpClient> {
+public interface TcpClientListener<C extends TcpClient> {
 
-    void onConnected(V client);
+    void onConnected(C client);
 
-    void onReceived(V client, IBinaryInput in) throws IOException;
+    void onReceived(C client, IBinaryInput in) throws IOException;
 
-    void onDisconnected(V client);
+    void onDisconnected(C client);
 }

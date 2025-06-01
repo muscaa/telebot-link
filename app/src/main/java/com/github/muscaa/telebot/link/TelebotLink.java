@@ -4,11 +4,14 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.github.muscaa.telebot.link.network.StunClient;
 
+import java.util.List;
+
 public class TelebotLink {
 
     public static final TelebotLink INSTANCE = new TelebotLink();
 
     public final MutableLiveData<String> mLogs = new MutableLiveData<>("");
+    public final MutableLiveData<List<String>> mClients = new MutableLiveData<>(List.of());
 
     private final StunClient stunClient = new StunClient();
 
@@ -17,6 +20,10 @@ public class TelebotLink {
 
         stunClient.setName(name);
         stunClient.connect(ip, port);
+    }
+
+    public void link(String name) {
+        stunClient.link(name);
     }
 
     public void disconnect() {
