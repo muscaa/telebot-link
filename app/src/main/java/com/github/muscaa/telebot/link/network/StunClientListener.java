@@ -92,10 +92,12 @@ public class StunClientListener<V extends StunClient> implements TcpClientListen
         boolean accept = in.Boolean();
 
         if (accept) {
+            String myip = in.LenString();
+            int myport = in.Int();
             String ip = in.LenString();
             int port = in.Int();
 
-            onLinkAccepted(client, name, ip, port);
+            onLinkAccepted(client, name, myip, myport, ip, port);
         } else {
             String declineMessage = in.LenString();
 
@@ -112,8 +114,10 @@ public class StunClientListener<V extends StunClient> implements TcpClientListen
         sendC2SLinkResponse(client, from, true);
     }
 
-    public void onLinkAccepted(StunClient client, String name, String ip, int port) {
-        TelebotLink.INSTANCE.print("Link accepted: " + name + " @ " + ip + ":" + port);
+    public void onLinkAccepted(StunClient client, String name, String myip, int myport, String ip, int port) {
+        TelebotLink.INSTANCE.print("Link accepted: " + name + " @ " + ip + ":" + port + " (on " + myip + ":" + myport + ")");
+
+        TelebotLink.INSTANCE.onLinkAccepted(name, myip, myport, ip, port);
     }
 
     public void onLinkDeclined(StunClient client, String name, String message) {
